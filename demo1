@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <string.h>
+const int maxn=10000;//提前估计好可能会开的节点的个数
+
+int tot;            //节点编号，模拟申请新节点，静态申请
+int trie[maxn][26]; //假设每个节点的分支有26个
+bool isw[maxn];     //判断该节点是不是单词结尾
+
+void insert(char *s,int rt){
+    for(int i=0;s[i];i++){
+        int x=s[i]-'a';//假设单词都是小写字母组成
+        if(trie[rt][x]==0){//没有，申请新节点
+            trie[rt][x]=++tot;
+        }
+        rt=trie[rt][x];
+    }
+    isw[rt]=true;
+}
+
+bool find(char *s,int rt){
+    for(int i=0;s[i];i++){
+        int x=s[i]-'a';//假设单词都是小写字母组成
+        if(trie[rt][x]==0){
+            return false;
+        }
+        rt=trie[rt][x];
+    }
+    return isw[rt];
+}
+
+char s[22];//单词读入
+
+int main(){
+    tot=0;//一开始没有节点
+
+    int rt=++tot;//申请一个根节点
+    memset(trie[rt],0,sizeof(trie[rt]));//初始化根节点
+    memset(isw,false,sizeof(isw));
+
+    while(scanf("%s",s),s[0]!='#'){//新建字典，以一个'#'结束
+        insert(s,rt);
+    }
+    while(scanf("%s",s),s[0]!='#'){//查单词，以一个'#'结束
+        if(find(s,rt))
+            printf("%s 在字典中\n",s);
+        else
+            printf("%s 不在字典中\n",s);
+    }
+    return 0;
+}
